@@ -106,51 +106,23 @@ image copy_image(image im)
 
 image rgb_to_grayscale(image im)
 {
+    // Y' = 0.299 R' + 0.587 G' + .114 B'
     assert(im.c == 3);
     image gray = make_image(im.w, im.h, 1);
-    // TODO Fill this in
-    int size_column = im.w; 
-    int size_row = im.h;
-    int size_channel = im.c;
-    float multiplier = 0; 
-    int k,j,i;
+    float r,g,b,z;
+    for (int x = 0; x < im.w; x++) {
+        for (int y = 0; y < im.h; y++) {
+            r = get_pixel(im,x,y,0);
+            g = get_pixel(im,x,y,1);
+            b = get_pixel(im,x,y,2);
 
-    for(k = 0; k < size_channel; ++k){
-        switch(k){
-            case 0:
-                multiplier = 0.299;
-                break;
-            case 1:
-                multiplier = 0.587;
-                break;
-            case 2:
-                multiplier = 0.114;
-                break;
-            default:
-                printf("Error more than 3 channels");
-        }
-        for(j = 0; j < size_row; ++j){
-            for(i = 0; i < size_column; ++i){
-                int index = i + size_column*j + size_column*size_row*k;
-                im.data[index] = im.data[index]*multiplier;
-            }
+            z = 0.299*r + 0.587*g + 0.114*b;
+            set_pixel(gray,x,y,0,z);
         }
     }
-
-    gray.data = calloc(size_column*size_row, sizeof(float));
-
-    for(j = 0; j < size_row; ++j){
-        for(i = 0; i < size_column; ++i){
-            int index_gry = i + size_column*j;
-            for(k = 0; k < size_channel; ++k){
-                int index_RGB = i + size_column*j + size_column*size_row*k;
-                gray.data[index_gry] += im.data[index_RGB];
-            }
-        }
-    }
-
     return gray;
 }
+
 
 void shift_image(image im, int c, float v)
 {
